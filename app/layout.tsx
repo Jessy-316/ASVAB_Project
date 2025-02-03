@@ -14,8 +14,8 @@ const geistMono = localFont({
 })
 
 export const metadata: Metadata = {
-  title: 'CodeGuide Starter Pro',
-  description: 'Starter kit from codeguide.dev',
+  title: 'ASVABProject',
+  description: 'ASVAB Project',
 }
 
 export default function RootLayout({

@@ -116,7 +116,7 @@ export function Categories() {
   const router = useRouter()
 
   return (
-    <section className="py-16 px-6 bg-background">
+    <section id="categories-section" className="py-16 px-6 bg-background">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">ASVAB Test Categories</h2>
