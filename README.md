@@ -1,133 +1,156 @@
 [![CodeGuide](/codeguide-backdrop.svg)](https://codeguide.dev)
 
 
-# CodeGuide Starter Lite
+# ASVAB Prep Platform
 
-A modern web application starter template built with Next.js 14, featuring authentication, database integration.
+A modern web application designed to help users prepare for the Armed Services Vocational Aptitude Battery (ASVAB) test. Features include practice tests, progress tracking, and a customizable dark/light theme interface.
+
+## Features
+
+- 🌓 Dark/Light Theme Toggle
+- 📝 ASVAB Practice Tests
+- 🔐 User Authentication
+- 📊 Progress Tracking
+- 💪 Comprehensive Test Categories
+- 📱 Responsive Design
 
 ## Tech Stack
 
-- **Framework:** [Next.js 14](https://nextjs.org/) (App Router)
-- **Authentication:** [Clerk](https://clerk.com/)
-- **Database:** [Supabase](https://supabase.com/)
-- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
-- **UI Components:** [shadcn/ui](https://ui.shadcn.com/)
-
-## Prerequisites
-
-Before you begin, ensure you have the following:
-- Node.js 18+ installed
-- A [Clerk](https://clerk.com/) account for authentication
-- A [Supabase](https://supabase.com/) account for database
-- Generated project documents from [CodeGuide](https://codeguide.dev/) for best development experience
+- **Framework:** Next.js 14 (App Router)
+- **Styling:** Tailwind CSS
+- **UI Components:** shadcn/ui
+- **Authentication:** Clerk
+- **Database:** Supabase
 
 ## Getting Started
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd codeguide-starter-pro
-   ```
+### Prerequisites
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   # or
-   yarn install
-   # or
-   pnpm install
-   ```
+- Node.js 18+ installed
+- npm or yarn package manager
 
-3. **Environment Variables Setup**
-   - Copy the `.env.example` file to `.env`:
-     ```bash
-     cp .env.example .env
-     ```
-   - Fill in the environment variables in `.env` (see Configuration section below)
+### Installation
 
-4. **Start the development server**
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   # or
-   pnpm dev
-   ```
+1. Clone the repository
+```bash
+git clone https://github.com/yourusername/asvab-prep.git
+cd asvab-prep
+```
 
-5. **Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.**
+2. Install dependencies
+```bash
+npm install
+# or
+yarn install
+```
 
-## Configuration
-
-### Clerk Setup
-1. Go to [Clerk Dashboard](https://dashboard.clerk.com/)
-2. Create a new application
-3. Go to API Keys
-4. Copy the `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY`
-
-### Supabase Setup
-1. Go to [Supabase Dashboard](https://app.supabase.com/)
-2. Create a new project
-3. Go to Project Settings > API
-4. Copy the `Project URL` as `NEXT_PUBLIC_SUPABASE_URL`
-5. Copy the `anon` public key as `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-
-## Environment Variables
-
-Create a `.env` file in the root directory with the following variables:
-
+3. Create a `.env.local` file in the root directory and add your environment variables:
 ```env
-# Clerk Authentication
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_publishable_key
-CLERK_SECRET_KEY=your_secret_key
-
-# Supabase
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+CLERK_SECRET_KEY=your_clerk_secret_key
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
-## Features
+4. Start the development server
+```bash
+npm run dev
+# or
+yarn dev
+```
 
-- 🔐 Authentication with Clerk
-- 📦 Supabase Database
-- 🎨 Modern UI with Tailwind CSS
-- 🚀 App Router Ready
-- 🔄 Real-time Updates
-- 📱 Responsive Design
+5. Open [http://localhost:3000](http://localhost:3000) with your browser
+
+## Available Commands
+
+```bash
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
+
+# Run linting
+npm run lint
+```
+
+## Theme Toggle Usage
+
+The theme toggle functionality is implemented using the following components:
+
+- `ThemeProvider`: Manages theme state
+- `ThemeToggle`: Button component for switching themes
+
+To use the theme toggle in your components:
+
+```tsx
+import { ThemeToggle } from "@/components/theme-toggle"
+import { ThemeProvider } from "@/components/theme-provider"
+
+// Wrap your app with ThemeProvider
+<ThemeProvider>
+  <YourComponent>
+    <ThemeToggle />
+  </YourComponent>
+</ThemeProvider>
+```
 
 ## Project Structure
 
 ```
-codeguide-starter/
-├── app/                # Next.js app router pages
-├── components/         # React components
-├── utils/             # Utility functions
-├── public/            # Static assets
-├── styles/            # Global styles
-├── documentation/     # Generated documentation from CodeGuide
-└── supabase/          # Supabase configurations and migrations
+asvab-prep/
+├── app/                 # Next.js app router pages
+├── components/         
+│   ├── landing/        # Landing page components
+│   ├── theme-toggle.tsx
+│   └── theme-provider.tsx
+├── public/             # Static assets
+├── styles/             # Global styles
+└── types/              # TypeScript type definitions
 ```
-
-## Documentation Setup
-
-To implement the generated documentation from CodeGuide:
-
-1. Create a `documentation` folder in the root directory:
-   ```bash
-   mkdir documentation
-   ```
-
-2. Place all generated markdown files from CodeGuide in this directory:
-   ```bash
-   # Example structure
-   documentation/
-   ├── project_requirements_document.md             
-   ├── app_flow_document.md
-   ├── frontend_guideline_document.md
-   └── backend_structure_document.md
-   ```
-
-3. These documentation files will be automatically tracked by git and can be used as a reference for your project's features and implementation details.
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+We welcome contributions! Please follow these steps:
+
+1. Fork the repository
+2. Create a new branch
+```bash
+git checkout -b feature/your-feature-name
+```
+
+3. Make your changes and commit them
+```bash
+git commit -m "Add your commit message"
+```
+
+4. Push to your fork
+```bash
+git push origin feature/your-feature-name
+```
+
+5. Create a Pull Request
+
+### Contributing Guidelines
+
+- Follow the existing code style
+- Write clear commit messages
+- Include tests if applicable
+- Update documentation as needed
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- [shadcn/ui](https://ui.shadcn.com/) for UI components
+- [Tailwind CSS](https://tailwindcss.com/) for styling
+- [Next.js](https://nextjs.org/) for the framework
+
+## Support
+
+For support, please open an issue in the GitHub repository or contact the maintainers.
