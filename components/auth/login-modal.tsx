@@ -12,14 +12,64 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { supabase } from "@/supabase/supabase"
 
 export function LoginModal() {
   const [isSignUp, setIsSignUp] = useState(false)
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [username, setUsername] = useState("")
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
+
+    if (isSignUp && password !== confirmPassword) {
+      setError("Passwords do not match")
+      setLoading(false)
+      return
+    }
+
+    try {
+      if (isSignUp) {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              username,
+              first_name: firstName,
+              last_name: lastName,
+            },
+          },
+        })
+        if (error) throw error
+        alert("Check your email for the confirmation link!")
+      } else {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        })
+        if (error) throw error
+        alert("Logged in successfully!")
+      }
+    } catch (error: any) {
+      setError(error.message)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button 
+        <Button
           size="sm"
           className="bg-[#000A1F] hover:bg-white hover:text-[#000A1F] text-white font-semibold rounded-lg transition-colors duration-200 border-2 border-[#000A1F]"
         >
@@ -28,64 +78,109 @@ export function LoginModal() {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] z-50">
         <DialogHeader>
-          <DialogTitle>{isSignUp ? 'Create an Account' : 'Welcome Back'}</DialogTitle>
+          <DialogTitle>{isSignUp ? "Create an Account" : "Welcome Back"}</DialogTitle>
           <DialogDescription>
-            {isSignUp ? 'Sign up to track your progress and save your scores.' : 'Login to access your account and continue your preparation.'}
+            {isSignUp
+              ? "Sign up to track your progress and save your scores."
+              : "Login to access your account and continue your preparation."}
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
+        <form onSubmit={handleSubmit} className="grid gap-4 py-4">
           {isSignUp && (
             <>
               <div className="grid gap-2">
                 <Label htmlFor="username">Username</Label>
-                <Input id="username" type="text" placeholder="Choose a username" />
+                <Input
+                  id="username"
+                  type="text"
+                  placeholder="Choose a username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="firstName">First Name</Label>
-                  <Input id="firstName" type="text" placeholder="First name" />
+                  <Input
+                    id="firstName"
+                    type="text"
+                    placeholder="First name"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    required
+                  />
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="lastName">Last Name</Label>
-                  <Input id="lastName" type="text" placeholder="Last name" />
+                  <Input
+                    id="lastName"
+                    type="text"
+                    placeholder="Last name"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    required
+                  />
                 </div>
               </div>
             </>
           )}
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="Enter your email" />
+            <Input
+              id="email"
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" placeholder="Enter your password" />
+            <Input
+              id="password"
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
           </div>
           {isSignUp && (
             <div className="grid gap-2">
               <Label htmlFor="confirm-password">Confirm Password</Label>
-              <Input id="confirm-password" type="password" placeholder="Confirm your password" />
+              <Input
+                id="confirm-password"
+                type="password"
+                placeholder="Confirm your password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+              />
             </div>
           )}
-        </div>
-        <div className="flex flex-col gap-4">
-          <Button 
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          <Button
+            type="submit"
             className="w-full bg-[#000A1F] hover:bg-white hover:text-[#000A1F] text-white font-semibold rounded-lg transition-colors duration-200 border-2 border-[#000A1F]"
+            disabled={loading}
           >
-            {isSignUp ? 'Sign Up' : 'Login'}
+            {loading ? "Processing..." : isSignUp ? "Sign Up" : "Login"}
           </Button>
-          <div className="text-center text-sm">
-            <span className="text-gray-600">
-              {isSignUp ? 'Already have an account?' : "Don't have an account?"}
-            </span>
-            <button
-              onClick={() => setIsSignUp(!isSignUp)}
-              className="ml-1 text-[#000A1F] hover:text-[#00061A] font-medium transition-all"
-            >
-              {isSignUp ? 'Login' : 'Sign Up'}
-            </button>
-          </div>
+        </form>
+        <div className="text-center text-sm">
+          <span className="text-gray-600">{isSignUp ? "Already have an account?" : "Don't have an account?"}</span>
+          <button
+            onClick={() => setIsSignUp(!isSignUp)}
+            className="ml-1 text-[#000A1F] hover:text-[#00061A] font-medium transition-all"
+            type="button"
+          >
+            {isSignUp ? "Login" : "Sign Up"}
+          </button>
         </div>
       </DialogContent>
     </Dialog>
   )
-} 
+}
+
