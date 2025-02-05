@@ -8,13 +8,6 @@ import { LoginModal } from "@/components/auth/login-modal"
 export function Hero() {
   const router = useRouter()
 
-  const scrollToCategories = () => {
-    const categoriesSection = document.getElementById('categories')
-    if (categoriesSection) {
-      categoriesSection.scrollIntoView({ behavior: 'smooth' })
-    }
-  }
-
   return (
     <>
       {/* Navbar */}
@@ -99,7 +92,7 @@ export function Hero() {
                     </Button>
                     <Button 
                       variant="outline" 
-                      size="lg"
+                      size="lg" 
                       className="text-[#000A1F] border-white hover:text-[#000A1F] hover:text-white"
                       onClick={() => {
                         const section = document.getElementById('categories-section');
