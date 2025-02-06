@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -15,6 +16,8 @@ import { Label } from "@/components/ui/label"
 import { supabase } from "@/supabase/supabase"
 
 export function LoginModal() {
+  const router = useRouter()
+  const [open, setOpen] = useState(true)
   const [isSignUp, setIsSignUp] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -51,13 +54,17 @@ export function LoginModal() {
         })
         if (error) throw error
         alert("Check your email for the confirmation link!")
+        setOpen(false)
       } else {
         const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         })
         if (error) throw error
-        alert("Logged in successfully!")
+        
+        setOpen(false)
+        router.push('/')
+        router.refresh()
       }
     } catch (error: any) {
       setError(error.message)
@@ -67,7 +74,7 @@ export function LoginModal() {
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
           size="sm"
