@@ -4,9 +4,23 @@ import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { LoginModal } from "@/components/auth/login-modal"
+import { UserNav } from "@/components/nav/user-nav"
+import { ThemeToggle } from "@/components/theme-toggle"
+import { useTheme } from "next-themes"
+import { useEffect, useState } from "react"
 
 export function Hero() {
+  const { theme, systemTheme } = useTheme()
   const router = useRouter()
+  const [mounted, setMounted] = useState(false)
+
+  // Wait for mount to avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Get current theme accounting for system preference
+  const currentTheme = theme === 'system' ? systemTheme : theme
 
   const scrollToCategories = () => {
     const categoriesSection = document.getElementById('categories')
@@ -18,32 +32,35 @@ export function Hero() {
   return (
     <>
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-sm border-b">
+      <nav className="fixed top-0 left-0 right-0 z-40 bg-background/80 backdrop-blur-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <div className="flex-shrink-0 flex items-center">
-              <Image
-                src={'/images/ASVABProject.png'}
-                alt="ASVABProject Logo"
-                width={150}
-                height={40}
-                className="cursor-pointer object-contain h-10 w-auto"
-                onClick={() => router.push('/')}
-                priority
-                style={{ maxWidth: '150px' }}
-                onError={(e) => {
-                  const img = e.target as HTMLImageElement;
-                  if (img.src.includes('/images/')) {
-                    img.src = '/ASVABProject.png';
-                  }
-                }}
-              />
+              {mounted && ( // Only render image after mounting
+                <Image
+                  src={currentTheme === 'dark' ? '/images/ASVABProject-dark.png' : '/images/ASVABProject.png'}
+                  alt="ASVABProject Logo"
+                  width={150}
+                  height={40}
+                  className="cursor-pointer object-contain h-10 w-auto"
+                  onClick={() => router.push('/')}
+                  priority
+                  style={{ maxWidth: '150px' }}
+                  onError={(e) => {
+                    const img = e.target as HTMLImageElement;
+                    if (img.src.includes('/images/')) {
+                      img.src = currentTheme === 'dark' ? '/ASVABProject-dark.png' : '/ASVABProject.png';
+                    }
+                  }}
+                />
+              )}
             </div>
 
-            {/* Login Modal Trigger */}
-            <div className="relative z-50">
-              <LoginModal />
+            {/* Add theme toggle next to user nav */}
+            <div className="flex items-center gap-4">
+              <ThemeToggle />
+              <UserNav />
             </div>
           </div>
         </div>
@@ -100,7 +117,7 @@ export function Hero() {
                     <Button 
                       variant="outline" 
                       size="lg"
-                      className="text-[#000A1F] border-white hover:text-[#000A1F] hover:text-white"
+                      className="text-[#000A1F] dark:text-white border-white hover:text-white"
                       onClick={() => {
                         const section = document.getElementById('categories-section');
                         if (section) {

@@ -32,7 +32,7 @@ export async function createClerkSupabaseClientSsr() {
     )
 }
 
-export default async function createClient() {
+export default async function createServerClient() {
     return createClient<Database>(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_KEY!,
