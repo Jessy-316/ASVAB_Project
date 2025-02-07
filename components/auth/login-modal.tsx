@@ -177,10 +177,12 @@ export function LoginModal() {
           </Button>
         </form>
         <div className="text-center text-sm">
-          <span className="text-gray-600">{isSignUp ? "Already have an account?" : "Don't have an account?"}</span>
+          <span className="text-gray-600 dark:text-gray-300">
+            {isSignUp ? "Already have an account?" : "Don't have an account?"}
+          </span>
           <button
             onClick={() => setIsSignUp(!isSignUp)}
-            className="ml-1 text-[#000A1F] hover:text-[#00061A] font-medium transition-all"
+            className="ml-1 text-[#000A1F] hover:text-[#00061A] dark:text-white dark:hover:text-gray-300 font-medium transition-all"
             type="button"
           >
             {isSignUp ? "Login" : "Sign Up"}
