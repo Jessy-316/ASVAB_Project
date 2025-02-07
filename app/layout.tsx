@@ -17,6 +17,9 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: 'ASVABProject',
   description: 'ASVAB Project',
+  icons: {
+    icon: '/asvab-favicon.png',
+  },
 }
 
 export default function RootLayout({
