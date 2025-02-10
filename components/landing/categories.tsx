@@ -134,7 +134,7 @@ export function Categories() {
             >
               <CardHeader>
                 <div className="flex items-center justify-between mb-2">
-                  <Badge className={category.color}>
+                  <Badge className={`${category.color} dark:bg-gray-800 dark:text-white rounded-md ring-1`}>
                     {category.questions} Questions
                   </Badge>
                   <Badge variant="outline">{category.timeMinutes} min</Badge>
