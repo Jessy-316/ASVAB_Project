@@ -1,23 +1,93 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { MessageCircle, X, Send } from "lucide-react"
+import { MessageCircle, X, Send, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export function ChatBox() {
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<Array<{text: string, isUser: boolean}>>([])
   const [input, setInput] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  const sendMessage = (e: React.FormEvent) => {
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages])
+
+  const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!input.trim()) return
+    if (!input.trim() || isLoading) return
     
-    setMessages([...messages, { text: input, isUser: true }])
+    const userMessage = input.trim()
+    setMessages(prev => [...prev, { text: userMessage, isUser: true }])
     setInput("")
-    // Here you would integrate with your AI service
+    setIsLoading(true)
+
+    try {
+      const response = await fetch('http://localhost:5678/webhook/asvabbot', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ 
+          message: userMessage,
+          timestamp: new Date().toISOString() 
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Failed to get response: ${response.status} ${response.statusText}`)
+      }
+
+      const rawData = await response.text()
+      console.log('Raw response:', rawData)
+      
+      let data
+      try {
+        data = JSON.parse(rawData)
+        console.log('Parsed data:', data)
+      } catch (parseError) {
+        console.error('JSON Parse Error:', parseError)
+        throw new Error('Failed to parse response')
+      }
+
+      // Handle both array format and direct object format
+      if (Array.isArray(data)) {
+        if (data.length > 0 && data[0].output) {
+          setMessages(prev => [...prev, { text: data[0].output, isUser: false }])
+        } else {
+          throw new Error('Invalid array response format')
+        }
+      } else if (typeof data === 'object' && data !== null) {
+        // Try to find output in the response object
+        const output = data.output || data.response || data.message || data.text
+        if (output) {
+          setMessages(prev => [...prev, { text: output, isUser: false }])
+        } else {
+          throw new Error('No output found in response')
+        }
+      } else {
+        throw new Error('Invalid response format')
+      }
+    } catch (error: unknown) {
+      console.error('Error details:', error)
+      setMessages(prev => [...prev, { 
+        text: error instanceof Error && error.message === 'Failed to parse response'
+          ? "I received an invalid response format. Please try again."
+          : "I apologize, but I'm having trouble connecting to the service at the moment. Please try again later.", 
+        isUser: false 
+      }])
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -91,6 +161,7 @@ export function ChatBox() {
                   </div>
                 </div>
               ))}
+              <div ref={messagesEndRef} />
             </div>
           )}
         </div>
@@ -109,9 +180,13 @@ export function ChatBox() {
           <Button 
             type="submit" 
             size="icon"
-            disabled={!input.trim()}
+            disabled={!input.trim() || isLoading}
           >
-            <Send className="h-4 w-4" />
+            {isLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Send className="h-4 w-4" />
+            )}
           </Button>
         </form>
       </div>

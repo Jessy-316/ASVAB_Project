@@ -1,6 +1,3 @@
-[![CodeGuide](/codeguide-backdrop.svg)](https://codeguide.dev)
-
-
 # ASVAB Prep Platform
 
 A modern web application designed to help users prepare for the Armed Services Vocational Aptitude Battery (ASVAB) test. Features include practice tests, progress tracking, and a customizable dark/light theme interface.
