@@ -8,6 +8,7 @@ import {
   UserButton
 } from '@clerk/nextjs'
 import './globals.css'
+import { ThemeProvider } from "@/components/theme-provider"
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -23,6 +24,9 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: 'ASVABProject',
   description: 'ASVAB Project',
+  icons: {
+    icon: '/asvab-favicon.png',
+  },
 }
 
 export default function RootLayout({
@@ -31,18 +35,17 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body className={`${geistSans.variable} ${geistMono.variable} font-sans`}>
-          <SignedOut>
-            <SignInButton />
-          </SignedOut>
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
           {children}
-        </body>
-      </html>
-    </ClerkProvider>
+        </ThemeProvider>
+      </body>
+    </html>
   )
 }
