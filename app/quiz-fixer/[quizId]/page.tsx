@@ -1,9 +1,8 @@
 import { Metadata } from 'next'
 
-interface QuizFixerPageProps {
-  params: {
-    quizId: string
-  }
+type Props = {
+  params: { quizId: string }
+  searchParams: { [key: string]: string | string[] | undefined }
 }
 
 export const metadata: Metadata = {
@@ -11,7 +10,7 @@ export const metadata: Metadata = {
   description: 'Fix and review quiz questions',
 }
 
-export default async function QuizFixerPage({ params }: QuizFixerPageProps) {
+export default async function QuizFixerPage({ params, searchParams }: Props) {
   const { quizId } = params
 
   return (
