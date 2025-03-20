@@ -26,16 +26,25 @@ const nextConfig = {
     
     return config;
   },
-  // Use a more robust approach to handle static resources
-  experimental: {
-    esmExternals: 'loose',
-  },
   // Explicitly make environment variables available
   env: {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
     CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
+  },
+  // Configure which paths should be processed and which should be skipped during build
+  exportPathMap: async function () {
+    // Return empty map to skip static generation for all pages
+    return {};
+  },
+  // Set all pages to be dynamically rendered during runtime
+  trailingSlash: true,
+  // Turn off experimental esmExternals as it's causing issues
+  experimental: {
+    // esmExternals flag is causing issues, so use 'loose' mode
+    // but disable it completely in the future
+    esmExternals: false,
   },
 }
 

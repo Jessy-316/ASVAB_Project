@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/setup-env.js && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prebuild": "node scripts/setup-env.js",
+    "vercel-build": "node scripts/setup-env.js && next build"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.11.0",
