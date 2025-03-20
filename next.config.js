@@ -26,7 +26,31 @@ const nextConfig = {
     
     // IMPORTANT: Exclude Supabase from server-side rendering during build
     if (isServer) {
-      config.externals = [...config.externals || [], '@supabase/supabase-js'];
+      // Add all Supabase packages to externals so they don't get bundled during build
+      const supabasePackages = [
+        '@supabase/supabase-js',
+        '@supabase/auth-helpers-nextjs',
+        '@supabase/auth-helpers-react',
+        '@supabase/auth-ui-react',
+        '@supabase/auth-ui-shared',
+        '@supabase/functions-js',
+        '@supabase/gotrue-js',
+        '@supabase/realtime-js',
+        '@supabase/storage-js',
+        '@supabase/postgrest-js',
+      ];
+      
+      // Add all Supabase packages to externals
+      config.externals = [
+        ...(config.externals || []),
+        ...supabasePackages,
+      ];
+      
+      // Replace any Supabase imports with an empty module
+      config.module.rules.push({
+        test: new RegExp(`node_modules/(${supabasePackages.join('|')})`),
+        use: 'null-loader',
+      });
     }
     
     return config;
@@ -50,12 +74,11 @@ const nextConfig = {
   
   // Disable static generation for problematic pages
   experimental: {
-    // Ensure SSR for dynamic pages
-    serverActions: true,
-    // Disable esmExternals
-    esmExternals: false,
-    // CRITICAL: Skip the instruments route
-    excludeRoute: (route) => route.includes('/instruments'),
+    // Use the correct format for serverActions
+    serverActions: {
+      bodySizeLimit: '2mb'
+    },
+    // Remove the unsupported options
   },
   
   // Override the default cache behavior for better reliability
@@ -68,13 +91,11 @@ const nextConfig = {
     return [
       {
         source: '/instruments',
-        destination: '/instruments',
-        has: [
-          {
-            type: 'header',
-            key: 'x-middleware-skip',
-          },
-        ],
+        destination: '/instruments.html',
+      },
+      {
+        source: '/instruments/:path*',
+        destination: '/instruments.html',
       },
     ];
   },
@@ -82,10 +103,18 @@ const nextConfig = {
   // Override the default getStaticPaths behavior
   // This ensures that the instruments page is not statically generated
   async exportPathMap(defaultPathMap) {
-    // Remove /instruments from static generation
+    // Remove problematic routes from static generation
     delete defaultPathMap['/instruments'];
     delete defaultPathMap['/instruments/page'];
     delete defaultPathMap['/api/instruments-bypass'];
+    
+    // Also delete any paths that include 'instruments'
+    Object.keys(defaultPathMap).forEach(path => {
+      if (path.includes('instruments')) {
+        delete defaultPathMap[path];
+      }
+    });
+    
     return defaultPathMap;
   },
 }

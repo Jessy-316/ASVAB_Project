@@ -1,12 +1,5 @@
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
-import {
-  ClerkProvider,
-  SignInButton,
-  SignedIn,
-  SignedOut,
-  UserButton
-} from '@clerk/nextjs'
 import './globals.css'
 import { ThemeProvider } from "@/components/theme-provider"
 import { headers } from 'next/headers'
@@ -68,8 +61,18 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   // Get the current path to check if we're on a route that needs special handling
-  const headersList = headers();
-  const path = headersList.get('x-pathname') || '';
+  // Use a try-catch to handle any errors with headers and provide a fallback
+  let path = '';
+  
+  try {
+    const headersList = headers();
+    // Use optional chaining to safely access the header value
+    path = headersList?.get?.('x-pathname') || '';
+  } catch (error) {
+    console.error('Error accessing headers:', error);
+    // Fallback to empty path
+    path = '';
+  }
   
   return (
     <html lang="en" suppressHydrationWarning>

@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/setup-env.js && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "prebuild": "node scripts/setup-env.js",
-    "vercel-build": "node scripts/vercel-build.js && SKIP_STATIC_GENERATION=true next build"
+    "vercel-build": "node scripts/vercel-build.js && next build",
+    "export": "next export"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.11.0",
