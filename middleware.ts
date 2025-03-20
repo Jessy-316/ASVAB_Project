@@ -14,12 +14,18 @@ export default authMiddleware({
     '/instruments(.*)',
   ],
   afterAuth(auth, req) {
+    const response = NextResponse.next();
+    
+    response.headers.set('x-pathname', req.nextUrl.pathname);
+    
     if (req.nextUrl.pathname.startsWith('/instruments')) {
-      const response = NextResponse.next();
       response.headers.set('x-middleware-skip', 'true');
-      return response;
+      response.headers.set('Cache-Control', 'no-store, must-revalidate');
+      response.headers.set('Pragma', 'no-cache');
+      response.headers.set('Expires', '0');
     }
-    return NextResponse.next();
+    
+    return response;
   },
 });
 

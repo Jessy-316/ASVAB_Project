@@ -36,6 +36,10 @@ const nextConfig = {
   // Control pages that should be statically optimized
   output: 'standalone', // Use standalone output for better deployment compatibility
   
+  // CRITICAL: Disable automatic static optimization for specific paths 
+  // This is a key setting that will prevent /instruments from being statically generated
+  pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
+  
   // Disable static generation for problematic pages
   experimental: {
     // Ensure SSR for dynamic pages
@@ -66,6 +70,14 @@ const nextConfig = {
         ],
       },
     ];
+  },
+  
+  // Override the default getStaticPaths behavior
+  // This ensures that the instruments page is not statically generated
+  async exportPathMap(defaultPathMap) {
+    // Remove /instruments from static generation
+    delete defaultPathMap['/instruments'];
+    return defaultPathMap;
   },
 }
 

@@ -8,12 +8,17 @@ const defaultValues = {
   NEXT_PUBLIC_SUPABASE_ANON_KEY: 'placeholder-key-for-build-only',
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: 'placeholder-key-for-build-only',
   CLERK_SECRET_KEY: 'placeholder-key-for-build-only',
-  VERCEL_BUILD_STEP: 'true'
+  VERCEL_BUILD_STEP: 'true',
+  SKIP_STATIC_GENERATION: 'true'
 };
 
 // Function to ensure environment variables are set
 function setupEnv() {
   console.log('Setting up environment variables for build...');
+  
+  // Set SKIP_STATIC_GENERATION to true to prevent static generation
+  process.env.SKIP_STATIC_GENERATION = 'true';
+  console.log('SKIP_STATIC_GENERATION set to true for build');
   
   // Check if we're in a Vercel environment
   const isVercel = !!process.env.VERCEL;

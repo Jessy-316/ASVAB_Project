@@ -1,82 +1,54 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import { Suspense, useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 
-// Force the page to be rendered on the client side only
+// Force client-side only rendering
 export const dynamic = 'force-dynamic';
-export const runtime = 'edge'; // Run on edge runtime only
-export const preferredRegion = 'auto'; // Automatically choose the closest region
 
-// Tell Next.js this should never be prerendered
+// Completely opt out of static rendering and prerendering
+export const runtime = 'edge';
 export const revalidate = 0;
+export const fetchCache = 'force-no-store';
+export const preferredRegion = 'auto';
 
-export default function Instruments() {
-  const [instruments, setInstruments] = useState<any[] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Only run in browser environment
-    if (typeof window === 'undefined') return;
-
-    async function fetchInstruments() {
-      try {
-        setLoading(true);
-        
-        // Create Supabase client on the client side only
-        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-        const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-        
-        // Check if environment variables are available
-        if (!supabaseUrl || !supabaseAnonKey) {
-          throw new Error('Supabase environment variables are not configured');
-        }
-        
-        const supabase = createClient(supabaseUrl, supabaseAnonKey);
-        
-        const { data, error } = await supabase.from('instruments').select();
-        
-        if (error) {
-          throw error;
-        }
-        
-        setInstruments(data);
-      } catch (err: any) {
-        console.error('Error fetching instruments:', err);
-        setError(err.message || 'Failed to load instruments');
-      } finally {
-        setLoading(false);
-      }
-    }
-    
-    fetchInstruments();
-  }, []);
-  
-  if (loading) {
-    return (
-      <div className="p-8">
-        <h1 className="text-2xl font-bold mb-4">Instruments</h1>
-        <p>Loading instruments...</p>
-      </div>
-    );
-  }
-  
-  if (error) {
-    return (
-      <div className="p-8">
-        <h1 className="text-2xl font-bold mb-4">Instruments</h1>
-        <p className="text-red-500">Error: {error}</p>
-      </div>
-    );
-  }
-  
+// This is a placeholder component that will be shown during build
+function InstrumentsPlaceholder() {
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold mb-4">Instruments</h1>
-      <pre className="bg-gray-100 p-4 rounded overflow-auto max-h-[500px]">
-        {JSON.stringify(instruments, null, 2)}
-      </pre>
+      <p>Loading instruments...</p>
     </div>
+  );
+}
+
+// Dynamically import the real component with SSR disabled
+// This ensures it only runs on the client side
+const DynamicInstrumentsContent = dynamic(
+  () => import('./InstrumentsContent'),
+  { 
+    ssr: false,
+    loading: () => <InstrumentsPlaceholder />
+  }
+);
+
+// The main component that's exported - this is what gets rendered at build time
+export default function Instruments() {
+  const [isMounted, setIsMounted] = useState(false);
+  
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+  
+  // During build/SSR, just show the placeholder
+  if (!isMounted) {
+    return <InstrumentsPlaceholder />;
+  }
+  
+  // On the client, render the dynamic content
+  return (
+    <Suspense fallback={<InstrumentsPlaceholder />}>
+      <DynamicInstrumentsContent />
+    </Suspense>
   );
 }
