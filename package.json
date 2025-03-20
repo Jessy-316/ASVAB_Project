@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "prebuild": "node scripts/setup-env.js",
-    "vercel-build": "node scripts/setup-env.js && SKIP_STATIC_GENERATION=true next build"
+    "vercel-build": "node scripts/vercel-build.js && SKIP_STATIC_GENERATION=true next build"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.11.0",
