@@ -11,7 +11,16 @@ export default authMiddleware({
     '/sign-up(.*)',
     '/api(.*)',
     '/practice(.*)',
+    '/instruments(.*)',
   ],
+  afterAuth(auth, req) {
+    if (req.nextUrl.pathname.startsWith('/instruments')) {
+      const response = NextResponse.next();
+      response.headers.set('x-middleware-skip', 'true');
+      return response;
+    }
+    return NextResponse.next();
+  },
 });
 
 export const config = {

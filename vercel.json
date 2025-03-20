@@ -5,7 +5,9 @@
       "src": "package.json",
       "use": "@vercel/next",
       "config": {
-        "buildCommand": "npm run vercel-build"
+        "buildCommand": "npm run vercel-build",
+        "maxLambdaSize": "50mb",
+        "zeroConfig": false
       }
     }
   ],
@@ -26,6 +28,14 @@
     "NEXT_PUBLIC_SUPABASE_URL": "${NEXT_PUBLIC_SUPABASE_URL}",
     "NEXT_PUBLIC_SUPABASE_ANON_KEY": "${NEXT_PUBLIC_SUPABASE_ANON_KEY}",
     "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY": "${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}",
-    "CLERK_SECRET_KEY": "${CLERK_SECRET_KEY}"
+    "CLERK_SECRET_KEY": "${CLERK_SECRET_KEY}",
+    "VERCEL_BUILD_STEP": "true"
+  },
+  "functions": {
+    "app/instruments/**": {
+      "includeFiles": "app/instruments/**",
+      "memory": 512,
+      "maxDuration": 10
+    }
   }
 } 

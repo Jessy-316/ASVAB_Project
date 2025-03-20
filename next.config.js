@@ -28,23 +28,44 @@ const nextConfig = {
   },
   // Explicitly make environment variables available
   env: {
-    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
-    CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
+    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder-for-build.supabase.co',
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key-for-build-only',
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || 'placeholder-key-for-build-only',
+    CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY || 'placeholder-key-for-build-only',
   },
-  // Configure which paths should be processed and which should be skipped during build
-  exportPathMap: async function () {
-    // Return empty map to skip static generation for all pages
-    return {};
-  },
-  // Set all pages to be dynamically rendered during runtime
-  trailingSlash: true,
-  // Turn off experimental esmExternals as it's causing issues
+  // Control pages that should be statically optimized
+  output: 'standalone', // Use standalone output for better deployment compatibility
+  
+  // Disable static generation for problematic pages
   experimental: {
-    // esmExternals flag is causing issues, so use 'loose' mode
-    // but disable it completely in the future
+    // Ensure SSR for dynamic pages
+    serverActions: true,
+    // Disable esmExternals
     esmExternals: false,
+  },
+  
+  // Set specific options for production builds on Vercel
+  distDir: process.env.VERCEL ? '.vercel/output/static' : '.next',
+  
+  // Override the default cache behavior for better reliability
+  generateBuildId: async () => {
+    return `build-${Date.now()}`; // Generate unique build ID
+  },
+  
+  // Prevent automatic static optimization for specific paths
+  async rewrites() {
+    return [
+      {
+        source: '/instruments',
+        destination: '/instruments',
+        has: [
+          {
+            type: 'header',
+            key: 'x-middleware-skip',
+          },
+        ],
+      },
+    ];
   },
 }
 
