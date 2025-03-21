@@ -43,92 +43,50 @@ const instrumentsHtmlContent = `
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ASVAB Instruments</title>
+  <title>ASVAB Study Materials</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 dark:bg-gray-900">
   <div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-center mb-8">ASVAB Instruments</h1>
+    <h1 class="text-3xl font-bold text-center mb-8 text-gray-900 dark:text-white">ASVAB Study Materials</h1>
     
-    <div id="loading" class="flex justify-center items-center h-64">
+    <!-- Sample data for General Knowledge -->
+    <div class="max-w-2xl mx-auto">
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+        <div class="h-64 bg-gray-100 dark:bg-gray-700 relative">
+          <img 
+            src="/images/General-Knowledge-Landing.png" 
+            alt="General Knowledge"
+            class="w-full h-full object-contain"
+            onerror="this.onerror=null; this.src='/placeholder-image.jpg'; console.error('Failed to load image');"
+          />
+        </div>
+        <div class="p-4">
+          <h2 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">General Knowledge</h2>
+          <p class="text-gray-600 dark:text-gray-300 mb-4">Review essential scientific concepts in biology, chemistry, and physics. This section covers fundamental principles and their applications in everyday life.</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Loading indicator (hidden by default) -->
+    <div id="loading" class="flex justify-center items-center h-64 hidden">
       <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
     </div>
     
-    <div id="instruments-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden"></div>
-    
+    <!-- Error message (hidden by default) -->
     <div id="error-message" class="text-center text-red-500 p-4 rounded-md hidden">
-      Error loading instruments
+      Error loading study materials
     </div>
   </div>
 
   <script>
-    // Client-side loading of instruments data
-    document.addEventListener('DOMContentLoaded', async function() {
-      const loadingEl = document.getElementById('loading');
-      const instrumentsEl = document.getElementById('instruments-container');
-      const errorEl = document.getElementById('error-message');
-      
-      try {
-        const response = await fetch('/api/instruments-bypass');
-        if (!response.ok) throw new Error('Failed to load instruments');
-        
-        const instruments = await response.json();
-        
-        // Hide loading spinner
-        loadingEl.classList.add('hidden');
-        
-        if (instruments && instruments.length > 0) {
-          // Show instruments grid
-          instrumentsEl.classList.remove('hidden');
-          
-          // Create instrument cards
-          instruments.forEach(instrument => {
-            const card = document.createElement('div');
-            card.className = 'bg-white rounded-lg shadow-md overflow-hidden';
-            card.innerHTML = \`
-              <div class="h-48 bg-gray-200 relative">
-                <img 
-                  src="\${instrument.image || '/images/default-instrument.jpg'}" 
-                  alt="\${instrument.name}"
-                  class="w-full h-full object-cover"
-                  onerror="this.src='/images/default-instrument.jpg'"
-                />
-              </div>
-              <div class="p-4">
-                <h2 class="text-xl font-semibold mb-2">\${instrument.name}</h2>
-                <p class="text-gray-600 mb-4">\${instrument.description || 'No description available'}</p>
-                \${instrument.sound ? \`
-                <button
-                  class="w-full py-2 px-4 rounded-md bg-blue-500 text-white hover:bg-blue-600 transition-colors"
-                  onclick="playSound('\${instrument.sound}')"
-                >
-                  Play Sound
-                </button>
-                \` : ''}
-              </div>
-            \`;
-            instrumentsEl.appendChild(card);
-          });
-        } else {
-          // Show error message if no instruments found
-          errorEl.textContent = 'No instruments found';
-          errorEl.classList.remove('hidden');
-        }
-      } catch (err) {
-        // Show error message
-        loadingEl.classList.add('hidden');
-        errorEl.textContent = err.message || 'Failed to load instruments';
-        errorEl.classList.remove('hidden');
-        console.error('Error:', err);
-      }
+    // Check if the image failed to load
+    document.addEventListener('DOMContentLoaded', function() {
+      const img = document.querySelector('img');
+      img.addEventListener('error', function() {
+        console.error('Failed to load image at:', this.src);
+      });
     });
-    
-    // Sound player function
-    function playSound(url) {
-      if (!url) return;
-      const audio = new Audio(url);
-      audio.play();
-    }
   </script>
 </body>
 </html>
@@ -184,6 +142,40 @@ export async function GET() {
 `;
 
 createPlaceholder(apiRoutePath, apiPlaceholderContent);
+
+// Add a simple placeholder image in case the real one doesn't load
+const placeholderImagePath = path.join(process.cwd(), 'public/placeholder-image.jpg');
+const placeholderImageContent = `data:image/jpeg;base64,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`;
+
+try {
+  fs.writeFileSync(placeholderImagePath, placeholderImageContent);
+  console.log(`✅ Created placeholder image: ${placeholderImagePath}`);
+} catch (err) {
+  console.error(`❌ Error creating placeholder image:`, err);
+}
+
+// Ensure the images directory exists in the Vercel build
+const imagesDir = path.join(process.cwd(), 'public/images');
+if (!fs.existsSync(imagesDir)) {
+  try {
+    fs.mkdirSync(imagesDir, { recursive: true });
+    console.log('✅ Created images directory');
+  } catch (err) {
+    console.error('❌ Error creating images directory:', err);
+  }
+}
+
+// Copy General-Knowledge-Landing.png to ensure it's available in the build
+const sourceImagePath = path.join(process.cwd(), 'public/images/General-Knowledge-Landing.png');
+if (fs.existsSync(sourceImagePath)) {
+  try {
+    console.log('✅ General-Knowledge-Landing.png exists and will be included in the build');
+  } catch (err) {
+    console.error('❌ Error checking General-Knowledge-Landing.png:', err);
+  }
+} else {
+  console.warn('⚠️ General-Knowledge-Landing.png not found in public/images directory');
+}
 
 // Mock Supabase module to prevent it from being loaded during build
 try {
