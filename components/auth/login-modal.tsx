@@ -161,10 +161,10 @@ export function LoginModal() {
           Login
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] z-50">
+      <DialogContent className="sm:max-w-[425px] z-50 bg-white dark:bg-gray-800">
         <DialogHeader>
-          <DialogTitle>{isSignUp ? 'Create an Account' : 'Welcome Back'}</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-gray-900 dark:text-white">{isSignUp ? 'Create an Account' : 'Welcome Back'}</DialogTitle>
+          <DialogDescription className="text-gray-500 dark:text-gray-300">
             {isSignUp ? 'Sign up to track your progress and save your scores.' : 'Login to access your account and continue your preparation.'}
           </DialogDescription>
         </DialogHeader>
@@ -176,7 +176,7 @@ export function LoginModal() {
           )}
           
           {success && (
-            <Alert className="bg-green-50 border-green-200 text-green-800 py-2">
+            <Alert className="bg-green-50 border-green-200 text-green-800 py-2 dark:bg-green-900 dark:border-green-800 dark:text-green-100">
               <AlertDescription>{success}</AlertDescription>
             </Alert>
           )}
@@ -184,41 +184,44 @@ export function LoginModal() {
           {isSignUp && (
             <>
               <div className="grid gap-2">
-                <Label htmlFor="username">Username</Label>
+                <Label htmlFor="username" className="text-gray-700 dark:text-gray-200">Username</Label>
                 <Input 
                   id="username" 
                   type="text" 
                   placeholder="Choose a username" 
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
+                  className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="firstName">First Name</Label>
+                  <Label htmlFor="firstName" className="text-gray-700 dark:text-gray-200">First Name</Label>
                   <Input 
                     id="firstName" 
                     type="text" 
                     placeholder="First name" 
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
+                    className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="lastName">Last Name</Label>
+                  <Label htmlFor="lastName" className="text-gray-700 dark:text-gray-200">Last Name</Label>
                   <Input 
                     id="lastName" 
                     type="text" 
                     placeholder="Last name" 
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
+                    className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
               </div>
             </>
           )}
           <div className="grid gap-2">
-            <Label htmlFor="email">Email <span className="text-red-500">*</span></Label>
+            <Label htmlFor="email" className="text-gray-700 dark:text-gray-200">Email <span className="text-red-500">*</span></Label>
             <Input 
               id="email" 
               type="email" 
@@ -226,10 +229,11 @@ export function LoginModal() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="password">Password <span className="text-red-500">*</span></Label>
+            <Label htmlFor="password" className="text-gray-700 dark:text-gray-200">Password <span className="text-red-500">*</span></Label>
             <Input 
               id="password" 
               type="password" 
@@ -237,18 +241,20 @@ export function LoginModal() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             />
           </div>
           {isSignUp && (
             <div className="grid gap-2">
-              <Label htmlFor="confirm-password">Confirm Password <span className="text-red-500">*</span></Label>
+              <Label htmlFor="confirm-password" className="text-gray-700 dark:text-gray-200">Confirm Password <span className="text-red-500">*</span></Label>
               <Input 
                 id="confirm-password" 
                 type="password" 
                 placeholder="Confirm your password" 
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                required={isSignUp}
+                required
+                className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
             </div>
           )}
@@ -273,14 +279,14 @@ export function LoginModal() {
               <button 
                 type="button"
                 onClick={() => setError("Password reset functionality will be added soon.")}
-                className="text-sm text-blue-600 hover:text-blue-800 text-center"
+                className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 text-center"
               >
                 Forgot password?
               </button>
             )}
             
             <div className="text-center text-sm">
-              <span className="text-gray-600">
+              <span className="text-gray-600 dark:text-gray-300">
                 {isSignUp ? 'Already have an account?' : "Don't have an account?"}
               </span>
               <button
@@ -290,7 +296,7 @@ export function LoginModal() {
                   setError(null)
                   setSuccess(null)
                 }}
-                className="ml-1 text-[#000A1F] hover:text-[#00061A] font-medium transition-all"
+                className="ml-1 text-[#000A1F] hover:text-[#00061A] dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-all"
               >
                 {isSignUp ? 'Login' : 'Sign Up'}
               </button>

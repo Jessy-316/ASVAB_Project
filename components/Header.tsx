@@ -33,7 +33,7 @@ export default function Header() {
                   className={`transition-colors ${
                     pathname === link.href
                       ? 'text-primary font-medium'
-                      : 'text-gray-600 hover:text-gray-900'
+                      : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
                   }`}
                 >
                   {link.label}
