@@ -7,9 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prebuild": "node scripts/setup-env.js",
-    "vercel-build": "node scripts/vercel-build.js && next build",
-    "export": "next export"
+    "vercel-build": "node scripts/vercel-build.js && next build"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.11.0",

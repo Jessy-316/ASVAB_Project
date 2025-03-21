@@ -18,15 +18,11 @@ const nextConfig = {
   },
   // Disable webpack optimization to avoid issues with module resolution
   webpack: (config, { isServer }) => {
-    // Disable optimization
+    // Disable optimization for more reliable builds
     config.optimization.minimize = false;
     
-    // Disable code splitting to avoid chunk loading issues
-    config.optimization.splitChunks = false;
-    
-    // IMPORTANT: Exclude Supabase from server-side rendering during build
+    // Exclude Supabase from server-side rendering during build
     if (isServer) {
-      // Add all Supabase packages to externals so they don't get bundled during build
       const supabasePackages = [
         '@supabase/supabase-js',
         '@supabase/auth-helpers-nextjs',
@@ -45,48 +41,40 @@ const nextConfig = {
         ...(config.externals || []),
         ...supabasePackages,
       ];
-      
-      // Replace any Supabase imports with an empty module
-      config.module.rules.push({
-        test: new RegExp(`node_modules/(${supabasePackages.join('|')})`),
-        use: 'null-loader',
-      });
     }
     
     return config;
   },
-  // Explicitly make environment variables available
+  // Explicitly make environment variables available with fallbacks
   env: {
-    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder-for-build.supabase.co',
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key-for-build-only',
+    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://qjghcdrxzziloqzehlud.supabase.co',
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqZ2hjZHJ4enppbG9xemVobHVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzg2ODIwOTgsImV4cCI6MjA1NDI1ODA5OH0.m1K31aZB2JAbFErBaPPIfN6zwyUvXRxoHPa87-c-_Zg',
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || 'placeholder-key-for-build-only',
     CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY || 'placeholder-key-for-build-only',
     // BYPASS_INSTRUMENTS_PRERENDER is used in the instruments page
     BYPASS_INSTRUMENTS_PRERENDER: 'true',
   },
   
-  // Control pages that should be statically optimized
-  output: 'standalone', // Use standalone output for better deployment compatibility
+  // Output as standalone build for better performance
+  output: 'standalone',
   
-  // CRITICAL: Disable automatic static optimization for specific paths 
-  // This is a key setting that will prevent /instruments from being statically generated
+  // Allowed page extensions
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
   
-  // Disable static generation for problematic pages
+  // Simplified experimental section
   experimental: {
-    // Use the correct format for serverActions
+    // Next.js 15 style serverActions config
     serverActions: {
       bodySizeLimit: '2mb'
     },
-    // Remove the unsupported options
   },
   
-  // Override the default cache behavior for better reliability
+  // Unique build ID to prevent caching issues
   generateBuildId: async () => {
-    return `build-${Date.now()}`; // Generate unique build ID
+    return `build-${Date.now()}`;
   },
   
-  // Prevent automatic static optimization for specific paths
+  // Simplified rewrites
   async rewrites() {
     return [
       {
@@ -98,24 +86,6 @@ const nextConfig = {
         destination: '/instruments.html',
       },
     ];
-  },
-  
-  // Override the default getStaticPaths behavior
-  // This ensures that the instruments page is not statically generated
-  async exportPathMap(defaultPathMap) {
-    // Remove problematic routes from static generation
-    delete defaultPathMap['/instruments'];
-    delete defaultPathMap['/instruments/page'];
-    delete defaultPathMap['/api/instruments-bypass'];
-    
-    // Also delete any paths that include 'instruments'
-    Object.keys(defaultPathMap).forEach(path => {
-      if (path.includes('instruments')) {
-        delete defaultPathMap[path];
-      }
-    });
-    
-    return defaultPathMap;
   },
 }
 
